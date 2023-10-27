@@ -2,7 +2,7 @@ import org.junit.*;
 
 public class ShipTest {
   @Test
-  public void test(){
+  public void ship_test(){
     Ship cruiser = new Ship("Cruiser", 3);
     Assert.assertEquals("Cruiser", cruiser.name());
     Assert.assertEquals(3, cruiser.length());
