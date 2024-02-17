@@ -1,18 +1,18 @@
 public class Cell {
   String coordinate;
   Ship ship;
-  Boolean fired_upon;
+  Boolean firedUpon;
 
-  public Cell(String str) {
-    coordinate = str;
-    fired_upon = false;
+  public Cell(String string) {
+    this.coordinate = string;
+    this.firedUpon = false;
   }
 
-  public String coordinate() {
+  public String getCoordinate() {
     return coordinate;
   }
 
-  public Ship ship() {
+  public Ship getShip() {
     return ship;
   }
 
@@ -23,29 +23,29 @@ public class Cell {
     return false;
   }
 
-  public void place_ship(Ship new_ship) {
-    ship = new_ship;
+  public void placeShip(Ship newShip) {
+    this.ship = newShip;
   }
 
-  public boolean fired_upon() {
-    return fired_upon;
+  public boolean firedUpon() {
+    return firedUpon;
   }
 
-  public void fire_upon() {
-    fired_upon = true;
+  public void fireUpon() {
+    firedUpon = true;
     if (ship != null) {
       ship.hit();
     }
   }
 
-  public String render(boolean show_ships) {
+  public String render(boolean showShips) {
     if (ship != null && ship.sunk()) {
       return "X";
-    } else if (fired_upon == true && ship == null) {
+    } else if (firedUpon == true && ship == null) {
       return "M";
-    } else if (ship != null && fired_upon == false && show_ships == true) {
+    } else if (ship != null && firedUpon == false && showShips == true) {
       return "S";
-    } else if (ship != null && fired_upon == true) {
+    } else if (ship != null && firedUpon == true) {
       return "H";
     }
     return ".";
@@ -54,9 +54,9 @@ public class Cell {
   public String render() {
     if (ship != null && ship.sunk()) {
       return "X";
-    } else if (fired_upon == true && ship == null) {
+    } else if (firedUpon == true && ship == null) {
       return "M";
-    } else if (ship != null && fired_upon == true) {
+    } else if (ship != null && firedUpon == true) {
       return "H";
     }
     return ".";
