@@ -46,7 +46,7 @@ public class BoardTest {
 
     Assert.assertEquals(true, board.all_unoccupied(valid_cruiser_coords));
     Assert.assertEquals(true, board.cells().get("A1").empty());
-    board.cells().get("A1").place_ship(cruiser);
+    board.cells().get("A1").placeShip(cruiser);
     Assert.assertEquals(false, board.cells().get("A1").empty());
     Assert.assertEquals(false, board.all_unoccupied(valid_cruiser_coords));
 
