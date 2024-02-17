@@ -101,7 +101,7 @@ public class Board {
   public void place_ship(Ship ship, String[] coords) {
     if (valid_placement(ship, coords)) {
       for (String element : coords) {
-        cells.get(element).place_ship(ship);
+        cells.get(element).placeShip(ship);
       }
     }
   }
