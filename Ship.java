@@ -3,33 +3,33 @@ public class Ship {
   int length;
   int health;
 
-  public Ship(String str, int integer){
-    name = str;
-    length = integer;
-    health = integer;
+  public Ship(String string, int integer){
+    this.name = string;
+    this.length = integer;
+    this.health = integer;
   }
 
-  public String name() {
-    return name;
+  public String getName() {
+    return this.name;
   }
 
-  public int length() {
-    return length;
+  public int getLength() {
+    return this.length;
   }
 
-  public int health() {
-    return health;
+  public int getHealth() {
+    return this.health;
   }
 
   public boolean sunk() {
-    if (health == 0) {
+    if (this.health == 0) {
       return true;
     }
     return false;
   }
 
   public void hit() {
-    health -= 1;
+    this.health -= 1;
   }
 
 }
