@@ -1,7 +1,7 @@
 public class Ship {
-  String name;
-  int length;
-  int health;
+  private String name;
+  private int length;
+  private int health;
 
   public Ship(String string, int integer){
     this.name = string;
