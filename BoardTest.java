@@ -8,8 +8,8 @@ public class BoardTest {
     Board board = new Board();
 
     Assert.assertEquals(16, board.cells().size());
-    Assert.assertEquals("A1", board.cells().get("A1").coordinate);
-    Assert.assertEquals("D4", board.cells().get("D4").coordinate);
+    Assert.assertEquals("A1", board.cells().get("A1").getCoordinate());
+    Assert.assertEquals("D4", board.cells().get("D4").getCoordinate());
 
     Assert.assertEquals(true, board.valid_coordinate("A1"));
     Assert.assertEquals(true, board.valid_coordinate("B3"));

@@ -42,7 +42,7 @@ public class Board {
   }
 
   public boolean length_match(Ship ship, String[] coords) {
-    if (ship.length == coords.length) {
+    if (ship.getLength() == coords.length) {
       return true;
     }
     return false;
