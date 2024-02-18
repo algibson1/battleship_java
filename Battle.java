@@ -49,16 +49,16 @@ public class Battle {
       Object key = computer_board_keys[new Random().nextInt(computer_board_keys.length)];
       int direction = new Random().nextInt(2);
       if (direction == 0) {
-        String[] coords = new String[ship.length];
+        String[] coords = new String[ship.getLength()];
         do {
-          coords = take_horizontal_coordinates(key, ship.length);
+          coords = take_horizontal_coordinates(key, ship.getLength());
         }
         while (!computer_board.valid_placement(ship, coords));
         computer_board.place_ship(ship, coords);
       } else {
-        String[] coords = new String[ship.length];
+        String[] coords = new String[ship.getLength()];
         do {
-          coords = take_vertical_coordinates(key, ship.length);
+          coords = take_vertical_coordinates(key, ship.getLength());
         }
         while (!computer_board.valid_placement(ship, coords));
         computer_board.place_ship(ship, coords);

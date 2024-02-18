@@ -1,7 +1,7 @@
 public class Cell {
-  String coordinate;
-  Ship ship;
-  Boolean firedUpon;
+  private String coordinate;
+  private Ship ship;
+  private Boolean firedUpon;
 
   public Cell(String string) {
     this.coordinate = string;
