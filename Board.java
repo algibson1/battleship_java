@@ -1,94 +1,74 @@
 import java.util.*;
 
 public class Board {
-  HashMap<String, Cell> cells = new HashMap<String, Cell>();
-  String[] coordinates = new String[] {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"};
+  private HashMap<String, Cell> cells;
+  private String[] coordinates;
 
   public Board() {
+    this.cells = new HashMap<String, Cell>();
+    this.coordinates = new String[] {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"};
     for (String element : coordinates) {
       cells.put(element, new Cell(element));
     }
   }
 
-  public HashMap<String, Cell> cells() {
-    return cells;
+  public HashMap<String, Cell> getCells(){
+    return this.cells;
   }
 
-  public boolean valid_coordinate(String str) {
-    boolean valid = false;
-    for (String element : coordinates) {
-      if (element == str) {
-        valid = true;
+  public boolean validCoordinate(String coordinate) {
+    return this.cells.containsKey(coordinate);
+  }
+
+  public boolean allValidCoordinates(String[] coordinates) {
+    boolean allValid = true;
+    for (String coordinate : coordinates) {
+      if (this.cells.containsKey(coordinate) == false) {
+        allValid = false;
       }
     }
-    return valid;
+    return allValid;
   }
 
-  public boolean all_valid_coords(String[] coords) {
-    boolean all_valid = true;
-    for (String element : coords) {
-      if (valid_coordinate(element) == false) {
-        all_valid = false;
-      }
-    }
-    return all_valid;
-  }
-
-  public boolean valid_placement(Ship ship, String[] coords) {
-    if (all_valid_coords(coords) && length_match(ship, coords) && consecutive(coords) && all_unoccupied(coords)) {
-      return true;
-    }
-    return false;
-  }
-
-  public boolean length_match(Ship ship, String[] coords) {
+  public boolean lengthMatch(Ship ship, String[] coords) {
     if (ship.getLength() == coords.length) {
       return true;
     }
     return false;
   }
 
+  public boolean horizontallyConsecutive(char[] letters, int[] numbers) {
+    for (int i = 1; i < letters.length; ++i) {
+      if (letters[i] != letters[0] || numbers[i] != numbers[i-1] + 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  public boolean verticallyConsecutive(char[] letters, int[] numbers) {
+    for (int i = 1; i < letters.length; ++i) {
+      if (numbers[i] != numbers[0] || letters[i] != letters[i-1] + 1) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public boolean consecutive(String[] coords) {
     char[] letters = new char[coords.length];
     int[] numbers = new int[coords.length];
 
-    int x = 0;
+    int index = 0;
     for (String element : coords) {
-      letters[x] = element.charAt(0);
-      numbers[x] = element.charAt(1);
-      x += 1;
+      letters[index] = element.charAt(0);
+      numbers[index] = element.charAt(1);
+      index += 1;
     }
-
-    int y = coords.length;
-    boolean same_column = true;
-    boolean cons_letters = true;
-    for (int i = 0; i < y - 1; ++i) {
-      if (letters[i] != letters[0]) {
-        same_column = false;
-      }
-      if (letters[i+1] != letters[i] + 1) {
-        cons_letters = false;
-      }
-    }
-
-    boolean same_row = true;
-    boolean cons_numbers = true;
-    for (int i = 0; i < y - 1; ++i) {
-      if (numbers[i] != numbers[0]) {
-        same_row = false;
-      }
-      if (numbers[i+1] != numbers[i] + 1) {
-        cons_numbers = false;
-      }
-    }
-
-    if ((same_row && cons_letters) || (same_column && cons_numbers)) {
-      return true;
-    }
-    return false;
+    return verticallyConsecutive(letters, numbers) || horizontallyConsecutive(letters, numbers);
   }
 
-  public boolean all_unoccupied(String[] coords) {
+  public boolean allUnoccupied(String[] coords) {
     boolean unoccupied = true;
     for (String element : coords) {
       if (cells.get(element).empty() == false) {
@@ -98,8 +78,15 @@ public class Board {
     return unoccupied;
   }
 
-  public void place_ship(Ship ship, String[] coords) {
-    if (valid_placement(ship, coords)) {
+  public boolean validPlacement(Ship ship, String[] coords) {
+    if (allValidCoordinates(coords) && lengthMatch(ship, coords) && consecutive(coords) && allUnoccupied(coords)) {
+      return true;
+    }
+    return false;
+  }
+
+  public void placeShip(Ship ship, String[] coords) {
+    if (validPlacement(ship, coords)) {
       for (String element : coords) {
         cells.get(element).placeShip(ship);
       }
@@ -122,7 +109,7 @@ public class Board {
     return board;
   }
 
-  public String render(boolean show_ships) {
+  public String render(boolean showShips) {
     String board = "  1 2 3 4 \nA ";
     for (int i = 0; i < cells.size(); ++i ) {
       board += cells.get(coordinates[i]).render(true) + " ";
