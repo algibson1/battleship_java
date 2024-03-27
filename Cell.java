@@ -3,8 +3,8 @@ public class Cell {
   private Ship ship;
   private Boolean firedUpon;
 
-  public Cell(String string) {
-    this.coordinate = string;
+  public Cell(String coordinate) {
+    this.coordinate = coordinate;
     this.firedUpon = false;
   }
 
