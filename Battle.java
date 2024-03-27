@@ -44,7 +44,7 @@ public class Battle {
 
   public void place_computer_ships() {
     
-    Object[] computer_board_keys = computer_board.cells().keySet().toArray();
+    Object[] computer_board_keys = computer_board.getCells().keySet().toArray();
     for (Ship ship : computer_ships) {
       Object key = computer_board_keys[new Random().nextInt(computer_board_keys.length)];
       int direction = new Random().nextInt(2);
@@ -53,15 +53,15 @@ public class Battle {
         do {
           coords = take_horizontal_coordinates(key, ship.getLength());
         }
-        while (!computer_board.valid_placement(ship, coords));
-        computer_board.place_ship(ship, coords);
+        while (!computer_board.validPlacement(ship, coords));
+        computer_board.placeShip(ship, coords);
       } else {
         String[] coords = new String[ship.getLength()];
         do {
           coords = take_vertical_coordinates(key, ship.getLength());
         }
-        while (!computer_board.valid_placement(ship, coords));
-        computer_board.place_ship(ship, coords);
+        while (!computer_board.validPlacement(ship, coords));
+        computer_board.placeShip(ship, coords);
       }
     }
   }
