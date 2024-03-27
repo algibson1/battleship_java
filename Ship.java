@@ -3,10 +3,10 @@ public class Ship {
   private int length;
   private int health;
 
-  public Ship(String string, int integer){
-    this.name = string;
-    this.length = integer;
-    this.health = integer;
+  public Ship(String name, int health){
+    this.name = name;
+    this.length = health;
+    this.health = health;
   }
 
   public String getName() {
