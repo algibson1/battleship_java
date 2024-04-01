@@ -4,6 +4,7 @@ public class BoardTest {
   Ship cruiser = new Ship("Cruiser", 3);
   Ship submarine = new Ship("Submarine", 2);
   Board board = new Board();
+  String[] coordinates = new String[] {"A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4", "C1", "C2", "C3", "C4", "D1", "D2", "D3", "D4"};
 
   String[] horizontalValid3Coordinates = new String[] {"A1", "A2", "A3"};
   String[] horizontalValid3Coordinates2 = new String[] {"B2", "C2", "D2"};
@@ -27,6 +28,11 @@ public class BoardTest {
     Assert.assertEquals(16, board.getCells().size());
     Assert.assertEquals("A1", board.getCells().get("A1").getCoordinate());
     Assert.assertEquals("D4", board.getCells().get("D4").getCoordinate());
+  }
+
+  @Test
+  public void getCoordinates_ReturnsCoordinates() {
+    Assert.assertArrayEquals(coordinates, board.getCoordinates());
   }
 
   @Test

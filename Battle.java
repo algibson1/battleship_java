@@ -3,12 +3,12 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Battle {
-  int computer_health = 0;
-  int user_health = 0;
-  Board computer_board = new Board();
-  Board user_board = new Board();
-  Ship[] computer_ships = new Ship[] {new Ship("Cruiser", 3), new Ship("Submarine", 2)};
-  Ship[] user_ships = new Ship[] {new Ship("Cruiser", 3), new Ship("Submarine", 2)};
+  int computerHealth = 5;
+  int userHealth = 5;
+  Board computerBoard = new Board();
+  Board userBoard = new Board();
+  Ship[] computerShips = new Ship[] {new Ship("Cruiser", 3), new Ship("Submarine", 2)};
+  Ship[] userShips = new Ship[] {new Ship("Cruiser", 3), new Ship("Submarine", 2)};
 
   public void start() {
     System.out.println("Welcome to Battleship");
@@ -27,89 +27,135 @@ public class Battle {
       }
       if (input.toLowerCase().equals("p")) {
         System.out.println("Okay, let's play!");
-        game_setup();
+        gameSetup();
       } else {
         System.out.println("k thx bai");
       }
     }
   }
 
-  public void game_setup() {
-    place_computer_ships();
+  public void gameSetup() {
+    placeComputerShips();
     System.out.println("I have laid out my ships on the grid");
     System.out.println("You now need to lay out your ships");
     System.out.println("The Cruiser is three units long and the Submarine is two units long");
-    place_user_ships();
+    placeUserShips();
   }
 
-  public void place_computer_ships() {
-    
-    Object[] computer_board_keys = computer_board.getCells().keySet().toArray();
-    for (Ship ship : computer_ships) {
-      Object key = computer_board_keys[new Random().nextInt(computer_board_keys.length)];
+  public void placeComputerShips() {
+    // for each ship
+    for (Ship ship : computerShips) {
+      String[] coordinates = new String[ship.getLength()];
+      // for later refactoring: keep track of starter coordinates that were already tried, so it doesn't repeat itself while searching for a valid combo
+      // until the coordinates calculated are a valid placement:
+      while (computerBoard.validPlacement(ship, coordinates) == false) {
+      // Make empty array to collect valid starter coordinates
+      String[] validStarters = new String[computerBoard.getCoordinates().length];
+      // choose: vertical or horizontal
       int direction = new Random().nextInt(2);
+      // If horizontal:
       if (direction == 0) {
-        String[] coords = new String[ship.getLength()];
-        do {
-          coords = take_horizontal_coordinates(key, ship.getLength());
+        // Make empty array, as long as the length of array of available coordinates
+        // go through list of coordinates and only save the ones that are valid starter coordinates
+        int i = 0;
+        for (String coordinate : computerBoard.getCoordinates() ) {
+          // Valid starting coordinate can begin with any letter
+          // But it cannot end with any number that would cause the ship to go off the board
+          // So, if ship length is 3, coordinate cannot end in 3 or 4
+          if ((ship.getLength() == 3 && coordinate.charAt(1) < 3) || 
+          // Or if ship length is 2, coordinate cannot end in 4
+              (ship.getLength() == 2 && coordinate.charAt(1) < 4)) {
+            validStarters[i] = coordinate;
+          }
+          i += 1;
         }
-        while (!computer_board.validPlacement(ship, coords));
-        computer_board.placeShip(ship, coords);
-      } else {
-        String[] coords = new String[ship.getLength()];
-        do {
-          coords = take_vertical_coordinates(key, ship.getLength());
+        // If Vertical:
+        } else {
+          int i = 0;
+          for (String coordinate : computerBoard.getCoordinates() ) {
+          // Valid starting coordinate can end with any number
+          // But cannot begin with any letter that would cause the ship to go off the board
+          // So if ship length is 3, coordinate cannot begin with C or D
+          if ((ship.getLength() == 3 && coordinate.charAt(0) < 'C') || 
+          // Or if ship length is 2, coordinate cannot begin with D
+              (ship.getLength() == 2 && coordinate.charAt(1) < 'D')) {
+            validStarters[i] = coordinate;
+          }
+          i += 1;
         }
-        while (!computer_board.validPlacement(ship, coords));
-        computer_board.placeShip(ship, coords);
       }
+      // I am still within my iteration for a single ship
+      // I now have an array of valid starter coordinates and a direction
+      // (The valid starter coordinates also includes some nil values)
+      // (I may consider swapping to an ArrayList later?)
+      // I now select a random starter coordinate (until it is not null)
+      String starterCoordinate = null;
+      while (starterCoordinate == null) {
+        int i = new Random().nextInt(validStarters.length); // get a random index number
+        starterCoordinate = validStarters[i]; // starterCoordinate is the value of the coordinate at that index
+      }
+      // I am still within my iteration for a single ship
+      // I now have a valid starter coordinate and a direction
+      // I can call upon helper methods to select coordinates
+      if (direction == 0) {
+        coordinates = takeHorizontalCoordinates(starterCoordinate, ship.getLength());
+      } else {
+        coordinates = takeVerticalCoordinates(starterCoordinate, ship.getLength());
+      }
+      // All of this is wrapped in a while loop
+      // So that if the final coordinates end up being invalid
+      // It will run again and fetch a different set of coordinates
+      // Until they ARE valid
+    }
+      // I now have an array of valid coordinates and can place a ship
+      computerBoard.placeShip(ship, coordinates);
     }
   }
 
-  public String[] take_horizontal_coordinates(Object starter_coordinate, int ship_length) {
+  public String[] takeHorizontalCoordinates(Object starterCoordinate, int shipLength) {
     // takes in starter coordinate and ship length, which represents how many additional coordinates to take
-    String coordinate = starter_coordinate.toString();
+    String coordinate = starterCoordinate.toString();
     // split the starter coordinate into letter and integer
     String letter = Character.toString(coordinate.charAt(0));
     int number = Character.getNumericValue(coordinate.charAt(1));
     // put starter coordinate into an array of length determined by ship length
-    String[] coordinates = new String[ship_length];
+    String[] coordinates = new String[shipLength];
     Array.set(coordinates, 0, coordinate);
 
     // for as many times as the number representing the length of the ship minus one
-    for (int i = 1; i < ship_length; i++) {
+    for (int i = 1; i < shipLength; i++) {
       // take the last char of the starter coordinate (an integer)
       // increase it to modify the original coordinate and add that to array at appropriate index
       int num = number + i;
-      String next_coord = letter + num;
-      coordinates[i] = next_coord;
+      String nextCoord = letter + num;
+      coordinates[i] = nextCoord;
     }
     return coordinates;
     // return an array of string elements representing coordinates
   }
 
-  public String[] take_vertical_coordinates(Object starter_coordinate, int ship_length) {
-    String coordinate = starter_coordinate.toString();
+  public String[] takeVerticalCoordinates(Object starterCoordinate, int shipLength) {
+    String coordinate = starterCoordinate.toString();
     // split the starter coordinate into letter and integer
     char letter = coordinate.charAt(0);
     int number = Character.getNumericValue(coordinate.charAt(1));
     // put starter coordinate into an array of length determined by ship length
-    String[] coordinates = new String[ship_length]; // placeholder ship length
+    String[] coordinates = new String[shipLength]; // placeholder ship length
     coordinates[0] = coordinate;
     // for as many times as the number representing the length of the ship minus one
-    for (int i = 1; i < ship_length; i++) {
+    for (int i = 1; i < shipLength; i++) {
       // take the first char of the starter coordinate (letter)
       // increase it to modify the original coordinate and add that to array at appropriate index
-      // String next_coord = Character.toString(letter) + (number + i);
-      String next_letter = Character.toString(letter + i);
-      String next_coord = next_letter + Integer.toString(number);
-      coordinates[i] = next_coord;
+      // String nextCoord = Character.toString(letter) + (number + i);
+      String nextLetter = Character.toString(letter + i);
+      String nextCoord = nextLetter + Integer.toString(number);
+      coordinates[i] = nextCoord;
     }
     return coordinates;
   }
 
 
-  public void place_user_ships() {
+  public void placeUserShips() {
 
   }
 

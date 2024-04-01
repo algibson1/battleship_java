@@ -16,6 +16,10 @@ public class Board {
     return this.cells;
   }
 
+  public String[] getCoordinates() {
+    return this.coordinates;
+  }
+
   public boolean validCoordinate(String coordinate) {
     return this.cells.containsKey(coordinate);
   }
