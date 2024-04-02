@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -46,70 +47,59 @@ public class Battle {
     // for each ship
     for (Ship ship : computerShips) {
       String[] coordinates = new String[ship.getLength()];
-      // for later refactoring: keep track of starter coordinates that were already tried, so it doesn't repeat itself while searching for a valid combo
       // until the coordinates calculated are a valid placement:
       while (computerBoard.validPlacement(ship, coordinates) == false) {
-      // Make empty array to collect valid starter coordinates
-      String[] validStarters = new String[computerBoard.getCoordinates().length];
-      // choose: vertical or horizontal
-      int direction = new Random().nextInt(2);
-      // If horizontal:
-      if (direction == 0) {
-        // Make empty array, as long as the length of array of available coordinates
-        // go through list of coordinates and only save the ones that are valid starter coordinates
-        int i = 0;
-        for (String coordinate : computerBoard.getCoordinates() ) {
-          // Valid starting coordinate can begin with any letter
-          // But it cannot end with any number that would cause the ship to go off the board
-          // So, if ship length is 3, coordinate cannot end in 3 or 4
-          if ((ship.getLength() == 3 && coordinate.charAt(1) < 3) || 
-          // Or if ship length is 2, coordinate cannot end in 4
-              (ship.getLength() == 2 && coordinate.charAt(1) < 4)) {
-            validStarters[i] = coordinate;
-          }
-          i += 1;
-        }
-        // If Vertical:
+        // choose: vertical or horizontal
+        int direction = new Random().nextInt(2);
+        // If horizontal:
+        if (direction == 0) {
+          // take horizontal coordinates 
+          coordinates = takeHorizontalCoordinates(getHorizontalStarter(ship), ship.getLength());
         } else {
-          int i = 0;
-          for (String coordinate : computerBoard.getCoordinates() ) {
-          // Valid starting coordinate can end with any number
-          // But cannot begin with any letter that would cause the ship to go off the board
-          // So if ship length is 3, coordinate cannot begin with C or D
-          if ((ship.getLength() == 3 && coordinate.charAt(0) < 'C') || 
-          // Or if ship length is 2, coordinate cannot begin with D
-              (ship.getLength() == 2 && coordinate.charAt(1) < 'D')) {
-            validStarters[i] = coordinate;
-          }
-          i += 1;
+          coordinates = takeVerticalCoordinates(getVerticalStarter(ship), ship.getLength());
         }
+        // All of this is wrapped in a while loop
+        // So that if the final coordinates end up being invalid
+        // It will run again and fetch a different set of coordinates
+        // Until they ARE valid
       }
-      // I am still within my iteration for a single ship
-      // I now have an array of valid starter coordinates and a direction
-      // (The valid starter coordinates also includes some nil values)
-      // (I may consider swapping to an ArrayList later?)
-      // I now select a random starter coordinate (until it is not null)
-      String starterCoordinate = null;
-      while (starterCoordinate == null) {
-        int i = new Random().nextInt(validStarters.length); // get a random index number
-        starterCoordinate = validStarters[i]; // starterCoordinate is the value of the coordinate at that index
-      }
-      // I am still within my iteration for a single ship
-      // I now have a valid starter coordinate and a direction
-      // I can call upon helper methods to select coordinates
-      if (direction == 0) {
-        coordinates = takeHorizontalCoordinates(starterCoordinate, ship.getLength());
-      } else {
-        coordinates = takeVerticalCoordinates(starterCoordinate, ship.getLength());
-      }
-      // All of this is wrapped in a while loop
-      // So that if the final coordinates end up being invalid
-      // It will run again and fetch a different set of coordinates
-      // Until they ARE valid
-    }
       // I now have an array of valid coordinates and can place a ship
       computerBoard.placeShip(ship, coordinates);
     }
+  }
+
+  public String getHorizontalStarter(Ship ship) {
+    // create an ArrayList
+    ArrayList<String> validStarters = new ArrayList<String>();
+    for (String coordinate : computerBoard.getCoordinates() ) {
+      // Valid starting coordinate can begin with any letter
+      // But it cannot end with any number that would cause the ship to go off the board
+      // So, if ship length is 3, coordinate cannot end in 3 or 4
+      if ((ship.getLength() == 3 && coordinate.charAt(1) < '3') || 
+      // Or if ship length is 2, coordinate cannot end in 4
+          (ship.getLength() == 2 && coordinate.charAt(1) < '4')) {
+        validStarters.add(coordinate);
+      }
+    }
+    int index = new Random().nextInt(validStarters.size());
+    return validStarters.get(index);
+  }
+
+  public String getVerticalStarter(Ship ship) {
+    // create an ArrayList
+    ArrayList<String> validStarters = new ArrayList<String>();
+    for (String coordinate : computerBoard.getCoordinates() ) {
+      // Valid starting coordinate can end with any number
+      // But it cannot begin with any letter that would cause the ship to go off the board
+      // So, if ship length is 3, coordinate cannot begin with C or D
+      if ((ship.getLength() == 3 && coordinate.charAt(0) < 'C') || 
+      // Or if ship length is 2, coordinate cannot end in D
+          (ship.getLength() == 2 && coordinate.charAt(0) < 'D')) {
+        validStarters.add(coordinate);
+      }
+    }
+    int index = new Random().nextInt(validStarters.size());
+    return validStarters.get(index);
   }
 
   public String[] takeHorizontalCoordinates(Object starterCoordinate, int shipLength) {
